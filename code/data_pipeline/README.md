@@ -53,11 +53,4 @@ Extracts color, depth, and camera info from ROS2 bag files and saves them as com
 ## Installation
 
 ```bash
-# Create conda environment
-conda create -n yolh python=3.10
-conda activate yolh
-
-# Install dependencies
-pip install -r requirements.txt
-
 # Install Grounding DINO, SAM 2, HaMeR (follow their official instructions)
