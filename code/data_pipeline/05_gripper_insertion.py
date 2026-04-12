@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from scripts.gripper_insertion import build_point_clouds
+from scripts.point_cloud import build_point_clouds
 from yolh_pipeline.config_utils import load_pipeline_config, get_step_cfg
 
 
