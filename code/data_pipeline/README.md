@@ -10,7 +10,7 @@ The pipeline consists of 6 sequential steps:
 | 01 | `01_hand_bbox.py` | `raw.npz` | `hand_bboxes.npz` | Hand detection + tracking | **Grounding DINO** |
 | 02 | `02_mask_generation.py` | `raw.npz` + bounding boxes | `masks.npz` + `arm_bboxes.npz` | Segmentation mask generation | **SAM 2** |
 | 03 | `03_hand_state.py` | `raw.npz` + bboxes + masks | `hand_state.npz` | 3D hand pose & articulation | **HaMeR** |
-| 04 | `04_gripper_action.py` | `hand_state.npz` | `gripper_action.npz` | Binary gripper open/close | — |
+| 04 | `04_gripper_action.py` | `hand_state.npz` | `gripper_action.npz` | Gripper open/close | — |
 | 05 | `05_gripper_insertion.py` | `raw.npz` + masks + action | `episodes.npz` | Point cloud + contact extraction | — |
 | 06 | `06_generate_dataset.py` | All `episodes.npz` | Final dataset | Merge, normalize, format | — |
 
