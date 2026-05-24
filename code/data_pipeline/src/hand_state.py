@@ -44,11 +44,11 @@ def _load_hamer(checkpoint_path=None):
         model_cfg.MODEL.BBOX_SHAPE = [192, 256]
         model_cfg.freeze()
 
+    # remove pretrained weights if exist since we are fine-tuning on a different domain
     if "PRETRAINED_WEIGHTS" in model_cfg.MODEL.BACKBONE:
         model_cfg.defrost()
         model_cfg.MODEL.BACKBONE.pop("PRETRAINED_WEIGHTS")
         model_cfg.freeze()
-
     model = HAMER.load_from_checkpoint(checkpoint_path, strict=False, cfg=model_cfg)
     model.cuda()
     model.eval()
@@ -255,6 +255,7 @@ def estimate_hand_states(
     hamer_checkpoint: str = None,
     rescale_factor: float = 2.0,
 ):
+    # take input from 00_ros2bag_process.py
     data = np.load(npz_path, allow_pickle=True)
     rgb_frames = data["rgb"]
     depth_frames = data["depth"]
@@ -265,11 +266,11 @@ def estimate_hand_states(
         "cx": float(intrinsic[2]),
         "cy": float(intrinsic[3]),
     }
-
+    # take input boundaries from 01_hand_bbox.py
     bbox_data = np.load(hand_bboxes_path, allow_pickle=True)
     bboxes = bbox_data["bboxes"]
     bbox_detected = bbox_data["hand_detected"]
-
+    # take input masks from 02_hand_masks.py
     mask_data = np.load(masks_path, allow_pickle=True)
     masks = mask_data["hand_masks"] if "hand_masks" in mask_data else mask_data["masks"]
 
@@ -283,9 +284,9 @@ def estimate_hand_states(
     faces = faces_left if hand_side == "left" else faces_right
 
     # Output arrays
-    kpts_3d_all = np.zeros((N, 21, 3), dtype=np.float32)
-    kpts_2d_all = np.zeros((N, 21, 2), dtype=np.int32)
-    hand_detected = np.zeros(N, dtype=bool)
+    kpts_3d_all = np.zeros((N, 21, 3), dtype=np.float32)    # store depth-aligned 3D keypoints
+    kpts_2d_all = np.zeros((N, 21, 2), dtype=np.int32)      # store 2D keypoints for reference
+    hand_detected = np.zeros(N, dtype=bool)                 # store final hand detection status
 
     for i in range(N):
         if not bbox_detected[i]:
@@ -309,6 +310,7 @@ def estimate_hand_states(
         if (i + 1) % 25 == 0:
             print(f"     [{i + 1}/{N}] detected={hand_detected[:i+1].sum()}")
 
+    # output keypoints and detection status to npz
     np.savez_compressed(
         output_path,
         kpts_3d=kpts_3d_all,

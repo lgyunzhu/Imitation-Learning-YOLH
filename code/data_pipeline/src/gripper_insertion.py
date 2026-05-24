@@ -27,16 +27,16 @@ def build_point_clouds(
 ):
     workspace_min = np.asarray(workspace_min, dtype=np.float32)
     workspace_max = np.asarray(workspace_max, dtype=np.float32)
-
+    # input npz files: raw RGB-D frames and intrinsics from 00_raw_data.py
     raw = np.load(raw_npz_path, allow_pickle=True)
     rgb_frames = raw["rgb"]
     depth_frames = raw["depth"]
     intrinsic = raw["intrinsic"]
-
+    # input npz files: hand masks from 02_hand_masks.py
     masks_data = np.load(masks_npz_path, allow_pickle=True)
     masks_key = "arm_hand_masks" if "arm_hand_masks" in masks_data else "masks"
     masks = masks_data[masks_key]
-
+    # input npz file: gripper actions from 04_gripper_action.py
     action_data = np.load(gripper_action_path, allow_pickle=True)
     ee_pts = action_data["ee_pts"]
     ee_oris = action_data["ee_oris"]
@@ -61,6 +61,8 @@ def build_point_clouds(
     print(f"     Building point clouds for {num_frames} frames "
           f"({int(hand_detected.sum())} with hand)")
 
+    # for each frame, backproject RGB-D to point cloud
+    # insert gripper points if detected, and save as variable-length array
     clouds = []
     for i in range(num_frames):
         # rgb-d backprojection, hand mask removed
@@ -76,7 +78,7 @@ def build_point_clouds(
             coords = coords[in_ws]
             colors = colors[in_ws]
 
-        # voxel downsample
+        # voxel downsample, divide the space into voxels of size voxel_size and keep one point per voxel
         if len(coords) > 0:
             vi = np.floor(coords / voxel_size).astype(np.int64)
             _, unique_idx = np.unique(vi, axis=0, return_index=True)

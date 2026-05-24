@@ -39,6 +39,7 @@ def _compute_frame_action(kpts_3d):
     gripper_ori = _get_gripper_orientation(thumb_tip, index_tip, kpts_3d)
     gripper_width = float(np.linalg.norm(thumb_tip - index_tip))
     return grasp_pt, gripper_ori, gripper_width
+    # return gipper position, orientation (as rotation matrix), and width
 
 
 def gaussian_process_smoothing(pts):
@@ -155,6 +156,8 @@ def compute_gripper_actions(
     # min_threshold = max_width * min_open_ratio
     # ee_widths_s[ee_widths_s < min_threshold] = 0.0
 
+    # output gripper position, orientation, width, and detection status to npz
+    # max_width is also saved for reference to determine open/close threshold
     np.savez_compressed(
         output_path,
         ee_pts=ee_pts_s,

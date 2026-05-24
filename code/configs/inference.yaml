@@ -1,0 +1,70 @@
+# Inference and deployment settings
+camera_intrinsic: [603.0418701171875, 603.035400390625, 330.1463623046875, 243.86166381835938]
+camera_serial: "147122075271"
+
+cam_to_base:
+  - [
+      0.8774199323967146,
+      0.0787691360021732,
+      0.4732120935124309,
+      0.51239450028674
+    ]
+  - [
+      -0.477511952448643,
+      0.23800629994665679,
+      0.8457749916227054,
+      -0.07034535590184161
+    ]
+  - [
+      -0.046006494124539825,
+      -0.9680642666678562,
+      0.24644467553427796,
+      0.4749796472511745
+    ]
+  - [ 0.0, 0.0, 0.0, 1.0]
+
+# Camera-frame workspace bounds.
+workspace_min: [-0.5, -0.1, 0.0]
+workspace_max: [ 0.5,  0.5, 1.0]
+
+# Optional base-frame safety bounds.
+# safe_workspace_min: [0.05, -0.25, 0.0]
+# safe_workspace_max: [0.40,  0.25, 0.35]
+# safe_eps: 0.002
+
+# Joint limit per control step. A per-joint map also works here.
+joint_delta_limit: 0.12
+# joint_delta_limit:
+#   shoulder_pan: 0.10
+#   shoulder_lift: 0.08
+#   elbow_flex: 0.08
+#   wrist_flex: 0.10
+#   wrist_roll: 0.15
+
+voxel_size: 0.005
+
+# Capsule radius per link in metres.
+arm_filter:
+  enabled: true
+  capsule_radius:
+    base_link: 0.05
+    shoulder_link: 0.04
+    upper_arm_link: 0.035
+    lower_arm_link: 0.03
+    wrist_link: 0.03
+
+# Runtime settings.
+num_action: 20
+ensemble_mode: "act"
+discretize_rotation: true
+rot_step_size: 0.196
+gripper_threshold: 0.02
+
+# Must match the training checkpoint.
+model:
+  obs_feature_dim: 512
+  hidden_dim: 512
+  nheads: 8
+  num_encoder_layers: 4
+  num_decoder_layers: 1
+  dropout: 0.1
